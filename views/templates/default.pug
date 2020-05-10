@@ -1,0 +1,7 @@
+include header
+h1 #{user.profile.name}
+img(src=user.profile.picture, class='profile', width='100', height='100', alt=((user.profile.name || user.email || user.id)))
+p 💌 Email:  
+    a(href='mailto:' + user.email) !{user.email}
+p 🏡 Address: Carrers del marines tal cosa
+include footer

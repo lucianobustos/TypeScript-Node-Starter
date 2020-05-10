@@ -18,6 +18,7 @@ import * as homeController from "./controllers/home";
 import * as userController from "./controllers/user";
 import * as apiController from "./controllers/api";
 import * as contactController from "./controllers/contact";
+import * as templatesController from  "./controllers/templates";
 
 
 // API keys and Passport configuration
@@ -102,6 +103,12 @@ app.post("/account/password", passportConfig.isAuthenticated, userController.pos
 app.post("/account/delete", passportConfig.isAuthenticated, userController.postDeleteAccount);
 app.get("/account/unlink/:provider", passportConfig.isAuthenticated, userController.getOauthUnlink);
 
+app.get("/templates", passportConfig.isAuthenticated, templatesController.getTemplates);
+app.get("/templates/:tempid", passportConfig.isAuthenticated, templatesController.getTemplateById);
+app.get("/templates/:tempid/html", passportConfig.isAuthenticated, templatesController.getTemplateByIdHTML);
+app.get("/templates/:tempid/pdf", passportConfig.isAuthenticated, templatesController.getTemplateByIdPDF);
+//app.get("/templates/:tempid", passportConfig.isAuthenticated, templatesController.getTemplateById);
+
 /**
  * API examples routes.
  */
@@ -120,7 +127,7 @@ app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRe
 /**
  * OAuth authentication routes. (Sign with linkeding)
  */
-app.get("/auth/linkedin", passport.authenticate("linkedin", { state: "SOME STATE"  }));
+app.get("/auth/linkedin", passport.authenticate("linkedin", { state: "fromlinkedinauthentitcation"  }));
 app.get("/auth/linkedin/callback", passport.authenticate("linkedin", { failureRedirect: "/login" }), (req, res) => {
     res.redirect(req.session.returnTo || "/");
 });
