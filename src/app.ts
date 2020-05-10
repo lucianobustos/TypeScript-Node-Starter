@@ -107,12 +107,21 @@ app.get("/account/unlink/:provider", passportConfig.isAuthenticated, userControl
  */
 app.get("/api", apiController.getApi);
 app.get("/api/facebook", passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
+app.get("/api/linkedin", passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getLinkedin);
 
 /**
  * OAuth authentication routes. (Sign in)
  */
 app.get("/auth/facebook", passport.authenticate("facebook", { scope: ["email", "public_profile"] }));
 app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/login" }), (req, res) => {
+    res.redirect(req.session.returnTo || "/");
+});
+
+/**
+ * OAuth authentication routes. (Sign with linkeding)
+ */
+app.get("/auth/linkedin", passport.authenticate("linkedin", { state: "SOME STATE"  }));
+app.get("/auth/linkedin/callback", passport.authenticate("linkedin", { failureRedirect: "/login" }), (req, res) => {
     res.redirect(req.session.returnTo || "/");
 });
 

@@ -1,6 +1,7 @@
 import passport from "passport";
 import passportLocal from "passport-local";
 import passportFacebook from "passport-facebook";
+import passportLinkedin from "passport-linkedin-oauth2";
 import _ from "lodash";
 
 // import { User, UserType } from '../models/User';
@@ -9,6 +10,7 @@ import { Request, Response, NextFunction } from "express";
 
 const LocalStrategy = passportLocal.Strategy;
 const FacebookStrategy = passportFacebook.Strategy;
+const LinkedInStrategy = passportLinkedin.Strategy;
 
 passport.serializeUser<any, any>((user, done) => {
     done(undefined, user.id);
@@ -100,13 +102,74 @@ passport.use(new FacebookStrategy({
                     req.flash("errors", { msg: "There is already an account using this email address. Sign in to that account and link it with Facebook manually from Account Settings." });
                     done(err);
                 } else {
-                    const user: any = new User();
+                    const user = new User();
                     user.email = profile._json.email;
                     user.facebook = profile.id;
                     user.tokens.push({ kind: "facebook", accessToken });
                     user.profile.name = `${profile.name.givenName} ${profile.name.familyName}`;
                     user.profile.gender = profile._json.gender;
                     user.profile.picture = `https://graph.facebook.com/${profile.id}/picture?type=large`;
+                    user.profile.location = (profile._json.location) ? profile._json.location.name : "";
+                    user.save((err: Error) => {
+                        done(err, user);
+                    });
+                }
+            });
+        });
+    }
+}));
+
+
+passport.use(new LinkedInStrategy({
+    clientID: process.env.LINKEDIN_KEY,
+    clientSecret: process.env.LINKEDIN_SECRET,
+    callbackURL: "/auth/linkedin/callback",
+    profileFields: ["r_emailaddress", "r_liteprofile", "r_basicprofile", "w_member_social"],
+    passReqToCallback: true
+  }, function (req: any, accessToken, refreshToken, profile, done)  {
+    // asynchronous verification, for effect...
+    console.log(profile);
+    if (req.user) {
+        User.findOne({ linkedin: profile.id }, (err, existingUser) => {
+            if (err) { return done(err); }
+            if (existingUser) {
+                req.flash("errors", { msg: "There is already a LinkedIn account that belongs to you. Sign in with that account or delete it, then link it with your current account." });
+                done(err);
+            } else {
+                User.findById(req.user.id, (err, user: any) => {
+                    if (err) { return done(err); }
+                    user.linkedin = profile.id;
+                    user.tokens.push({ kind: "linkedin", accessToken });
+                    user.profile.name = user.profile.name || `${profile.name.givenName} ${profile.name.familyName}`;
+                    user.profile.gender = user.profile.gender || profile._json.gender;
+                    user.profile.picture = user.profile.picture || profile.photos[0].value;
+                    user.save((err: Error) => {
+                        req.flash("info", { msg: "LinkedIn account has been linked." });
+                        done(err, user);
+                    });
+                });
+            }
+        });
+    } else {
+        User.findOne({ linkedin: profile.id }, (err, existingUser) => {
+            if (err) { return done(err); }
+            if (existingUser) {
+                return done(undefined, existingUser);
+            }
+            const searchEmail = profile.displayName.replace(" ", ".").toLocaleLowerCase();
+            User.findOne({ email: searchEmail }, (err, existingEmailUser) => {
+                if (err) { return done(err); }
+                if (existingEmailUser) {
+                    req.flash("errors", { msg: "There is already an account using this email address. Sign in to that account and link it with Facebook manually from Account Settings." });
+                    done(err);
+                } else {
+                    const user = new User();
+                    user.email = searchEmail;
+                    user.linkedin = profile.id;
+                    user.tokens.push({ kind: "linkedin", accessToken });
+                    user.profile.name = `${profile.name.givenName} ${profile.name.familyName}`;
+                    user.profile.gender = profile._json.gender || "other";
+                    user.profile.picture =profile.photos[0].value;
                     user.profile.location = (profile._json.location) ? profile._json.location.name : "";
                     user.save((err: Error) => {
                         done(err, user);

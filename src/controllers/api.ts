@@ -21,12 +21,29 @@ export const getApi = (req: Request, res: Response) => {
  */
 export const getFacebook = (req: Request, res: Response, next: NextFunction) => {
     const user = req.user as UserDocument;
-    const token = user.tokens.find((token: any) => token.kind === "facebook");
+    const token = user.tokens.find((token: any) => token.kind === "linkedin");
     graph.setAccessToken(token.accessToken);
     graph.get(`${user.facebook}?fields=id,name,email,first_name,last_name,gender,link,locale,timezone`, (err: Error, results: graph.FacebookUser) => {
         if (err) { return next(err); }
         res.render("api/facebook", {
             title: "Facebook API",
+            profile: results
+        });
+    });
+};
+
+/**
+ * GET /api/linkedin
+ * Facebook API example.
+ */
+export const getLinkedin = (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user as UserDocument;
+    const token = user.tokens.find((token: any) => token.kind === "linkedin");
+    graph.setAccessToken(token.accessToken);
+    graph.get(`${user.linkedin}?projection=(id,firstName,lastName,email)`, (err: Error, results: graph.FacebookUser) => {
+        if (err) { return next(err); }
+        res.render("api/linkedin", {
+            title: "linkedin API",
             profile: results
         });
     });
