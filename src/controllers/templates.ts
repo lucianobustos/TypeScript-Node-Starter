@@ -27,7 +27,10 @@ export const getTemplates = async (req: Request, res: Response, next: NextFuncti
         t.html = fullUrl +  t.html ;
         t.pdf = fullUrl +  t.pdf ;
     });
-    res.status(200).json(templates);
+    res.render("templates", {
+        title: "Templates",
+        templates:templates,
+    });
 };
 
 export const getTemplateById = async (req: Request, res: Response, next: NextFunction) => {
