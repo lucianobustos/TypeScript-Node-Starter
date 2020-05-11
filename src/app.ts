@@ -113,6 +113,7 @@ app.get("/templates/:tempid/pdf", passportConfig.isAuthenticated, templatesContr
  * API examples routes.
  */
 app.get("/api", apiController.getApi);
+app.get("/api/vars", apiController.getEnvVars);
 app.get("/api/facebook", passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
 app.get("/api/linkedin", passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getLinkedin);
 

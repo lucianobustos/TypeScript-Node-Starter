@@ -15,6 +15,11 @@ export const getApi = (req: Request, res: Response) => {
     });
 };
 
+export const getEnvVars = async (req: Request, res: Response) => {
+    const dto = process.env;
+    res.status(200).json(dto);
+};
+
 /**
  * GET /api/facebook
  * Facebook API example.
