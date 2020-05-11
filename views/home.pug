@@ -10,24 +10,13 @@ block content
             i.fa.fa-linkedin
             | Sign in with LinkedIn
   hr
-  .row
-    .col-sm-6
-      h2 Heading
-      p Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
-      p
-        a.btn.btn-secondary(href='#', role='button') View details »
-    .col-sm-6
-      h2 Heading 2
-      p Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
-      p
-        a.btn.btn-secondary(href='#', role='button') View details »
-    .col-sm-6
-      h2 Heading
-      p Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
-      p
-        a.btn.btn-secondary(href='#', role='button') View details »
-    .col-sm-6
-      h2 Heading
-      p Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
-      p
-        a.btn.btn-secondary(href='#', role='button') View details »
+  h1 Available templates for social networks
+  p So far we have these templates for your social account.
+  p Connect your social account and share your CV with style.
+
+  for t in templates
+    img(src='https://img.icons8.com/doodle/1x/'+t.entityMap.toLowerCase()+'.png')
+    p #{t.name}
+  
+  p We don't collect or copy your social information. Please, read our 
+    a(href='/privacy') Privacy statements

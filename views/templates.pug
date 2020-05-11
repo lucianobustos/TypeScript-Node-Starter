@@ -1,20 +1,29 @@
 extends layout
 
 block content
-    legend Templates
-        table
+  .page-header
+    h3 Templates
+        hr
+        table(cellpadding=4)
+            tr
+                th 
+                th Description
+                th Get it
             for t in templates
                 tr
-                    td
-                        h2 #{t.name} 
-                        cite Designed for #{t.entityMap} 
+                    td(valign='top')
+                        img(src='https://img.icons8.com/doodle/1x/'+t.entityMap.toLowerCase()+'.png')
+                    td(valign='top')
+                        h3 #{t.name} 
+                        cite Designed for #{t.entityMap}
                         p
-                            a(href="#" onClick="previewMe('" + t.id + "','"+t.jpeg+"')") Preview 
-                            span or 
+                            a(href="#/" onClick="previewMe('" + t.id + "','"+t.jpeg+"');") Preview 
+                        img(id=t.id, height='200')
+                    td(valign='top')
+                        p 
                             a(href=t.html target="_blank") HTML 
                                 img(src='http://icons.iconarchive.com/icons/graphicloads/filetype/48/txt-icon.png')
-                            span    or   
-                            a(href=t.pdf target="_blank") Download PDF
-                                img(src='http://icons.iconarchive.com/icons/graphicloads/filetype/48/pdf-icon.png')
                         p
-                            img(id=t.id, height='200')
+                            a(href=t.pdf target="_blank") PDF 
+                                img(src='http://icons.iconarchive.com/icons/graphicloads/filetype/48/pdf-icon.png')
+                        p #{t.templateName}

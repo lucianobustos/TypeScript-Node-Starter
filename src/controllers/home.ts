@@ -1,12 +1,18 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import fetch from "node-fetch";
+import { TemplateDocument, Template } from "../models/Template";
 /**
  * GET /
  * Home page.
  */
-export const index = (req: Request, res: Response) => {
+export const index = async (req: Request, res: Response, next: NextFunction) => {
+    const templates: Array<TemplateDocument> = await Template.find({}, (err: Error, templates: Array<TemplateDocument>) => {
+        if (err) { return next(err); }
+        return templates;
+    });
     res.render("home", {
-        title: "Home"
+        title: "Home",
+        templates:templates
     });
 };
 
