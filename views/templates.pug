@@ -8,7 +8,6 @@ block content
             tr
                 th 
                 th Description
-                th Get it
             for t in templates
                 tr
                     td(valign='top')
@@ -17,13 +16,12 @@ block content
                         h3 #{t.name} 
                         cite Designed for #{t.entityMap}
                         p
-                            a(href="#/" onClick="previewMe('" + t.id + "','"+t.jpeg+"');") Preview 
-                        img(id=t.id, height='200')
-                    td(valign='top')
+                            a(href="#/" onClick="previewMe('" + t.id + "','"+t.jpeg+"');") Click to preview 
                         p 
                             a(href=t.html target="_blank") HTML 
                                 img(src='http://icons.iconarchive.com/icons/graphicloads/filetype/48/txt-icon.png')
                         p
                             a(href=t.pdf target="_blank") PDF 
                                 img(src='http://icons.iconarchive.com/icons/graphicloads/filetype/48/pdf-icon.png')
-                        p #{t.templateName}
+                        p(style='font-size:10px') #{t.templateName}
+                        img(id=t.id, height='200')
