@@ -107,6 +107,7 @@ app.get("/templates", passportConfig.isAuthenticated, templatesController.getTem
 app.get("/templates/:tempid", passportConfig.isAuthenticated, templatesController.getTemplateById);
 app.get("/templates/:tempid/html", passportConfig.isAuthenticated, templatesController.getTemplateByIdHTML);
 app.get("/templates/:tempid/pdf", passportConfig.isAuthenticated, templatesController.getTemplateByIdPDF);
+app.get("/templates/:tempid/jpeg", passportConfig.isAuthenticated, templatesController.getTemplateByIdJPEG);
 //app.get("/templates/:tempid", passportConfig.isAuthenticated, templatesController.getTemplateById);
 
 /**

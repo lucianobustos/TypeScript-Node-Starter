@@ -6,6 +6,7 @@ export type TemplateDocument = mongoose.Document & {
     templateName: string;
     html: string;
     pdf: string;
+    jpeg: string;
 };
 
 const templateSchema = new mongoose.Schema({
@@ -13,9 +14,15 @@ const templateSchema = new mongoose.Schema({
     entityMap: String,
     templateName: String,
     html: {
+      type: String,
+      default: function() {
+        return `/templates/${this._id}/html`;
+      }
+    },
+    jpeg: {
         type: String,
         default: function() {
-          return `/templates/${this._id}/html`;
+          return `/templates/${this._id}/jpeg`;
         }
       },
     pdf: {

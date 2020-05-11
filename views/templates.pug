@@ -2,15 +2,19 @@ extends layout
 
 block content
     legend Templates
-    p 
-    .row
-        .col-sm-6
+        table
             for t in templates
-                h2 #{t.name} 
-                cite Designed for #{t.entityMap} 
-                p
-                    a(href=t.html target="_blank") Preview 
-                        img(src='http://icons.iconarchive.com/icons/graphicloads/filetype/48/txt-icon.png')
-                    span    or   
-                    a(href=t.pdf target="_blank") Download PDF
-                        img(src='http://icons.iconarchive.com/icons/graphicloads/filetype/48/pdf-icon.png')
+                tr
+                    td
+                        h2 #{t.name} 
+                        cite Designed for #{t.entityMap} 
+                        p
+                            a(href="#" onClick="previewMe('" + t.id + "','"+t.jpeg+"')") Preview 
+                            span or 
+                            a(href=t.html target="_blank") HTML 
+                                img(src='http://icons.iconarchive.com/icons/graphicloads/filetype/48/txt-icon.png')
+                            span    or   
+                            a(href=t.pdf target="_blank") Download PDF
+                                img(src='http://icons.iconarchive.com/icons/graphicloads/filetype/48/pdf-icon.png')
+                    td
+                        img(id=t.id, width='200')

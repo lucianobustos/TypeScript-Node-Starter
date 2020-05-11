@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { Template, TemplateDocument } from "../models/Template";
+import sass from "node-sass";
 import path from "path";
 import pug from "pug";
 import pdf, { CreateOptions } from "html-pdf";
@@ -43,8 +44,10 @@ export const getTemplateById = async (req: Request, res: Response, next: NextFun
 export class PdfTemplateOptions  {
     rootTemplatePath: string = path.resolve("./views/templates");
     scssTemplate =  "template.scss";
+    compiledStyle: object;
     pugTemplate = "default.pug";
     toHtml = false;
+    type: CreateOptions["type"] = "pdf"; //png, jpeg, pdf
     user: object;
     generated: string = new Date().toJSON().slice(0, 10).split("-").reverse().join("/")
 };
@@ -61,12 +64,28 @@ export const getTemplateByIdHTML = async (req: Request, res: Response, next: Nex
 
 
 
-function createPDFAsync(html: string, basePath: string) {
+function createPDFAsync(html: string, basePath: string, type: CreateOptions["type"]) {
+    const headercontent =  {
+        "height": "10mm",
+        "contents": "<div style=\"text-align: center;\">Author: Luciano Bustos</div>"
+      };
+    const footerconfig  = {
+        "height": "20mm",
+        "contents": {
+          first: "Cover page",
+          2: "Second page", // Any page number is working. 1-based index
+          default: "<span style=\"color: #444;\">{{page}}</span>/<span>{{pages}}</span>", // fallback value
+          last: "Last Page"
+        }
+      };
     const options: CreateOptions = {
         base: basePath,
         format: "A4",
         width: "210mm",
-        height: "297mm"
+        height: "297mm",
+        header: headercontent,
+        footer: footerconfig,
+        type: type
     };
     
     return new Promise((resolve, reject) => {
@@ -80,17 +99,16 @@ function createPDFAsync(html: string, basePath: string) {
 }
 
 async function PDFAsync(options: PdfTemplateOptions) {
-    /*const styleOptions = {
+    const styleOptions = {
         file: path.resolve(options.rootTemplatePath, options.scssTemplate)
     };
     const compiledStyle = await sass.renderSync(styleOptions);
     options.compiledStyle = compiledStyle.css;
-    */
     const html = pug.renderFile(path.resolve(options.rootTemplatePath, options.pugTemplate), options);
     if (options.toHtml) {
         return html;
     } else {
-        const buffer = createPDFAsync(html, options.rootTemplatePath);
+        const buffer = createPDFAsync(html, options.rootTemplatePath, options.type);
         return buffer;
     }
 }
@@ -107,5 +125,20 @@ export const getTemplateByIdPDF = async (req: Request, res: Response) => {
     pdfTemplateOptions.user =  req.user;
     const buffer = await PDFAsync(pdfTemplateOptions) as Buffer;
     res.set({ "Content-Type": pdfTemplateOptions.toHtml ? "text/html" : "application/pdf", "Content-Length": buffer.length });
-    res.send(buffer);
+    res.end(buffer, "binary");
+};
+export const getTemplateByIdJPEG = async (req: Request, res: Response) => {
+
+    const templateId = req.params.tempid;
+    const templateDocument = await Template.findById(templateId, (err: Error, template: TemplateDocument) => {
+        return template;
+    });
+
+    const pdfTemplateOptions = new PdfTemplateOptions();
+    pdfTemplateOptions.type = "jpeg";
+    pdfTemplateOptions.pugTemplate = templateDocument.templateName;
+    pdfTemplateOptions.user =  req.user;
+    const buffer = await PDFAsync(pdfTemplateOptions) as Buffer;
+    res.set({ "Content-Type": "image/jpeg", "Content-Length": buffer.length });
+    res.end(buffer, "binary");
 };

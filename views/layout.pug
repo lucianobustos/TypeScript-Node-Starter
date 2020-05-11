@@ -30,3 +30,8 @@ html(lang='')
       window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
       ga('create','UA-xxxxxx','auto');ga('send','pageview')
     script(src='https://www.google-analytics.com/analytics.js' async defer)
+
+    script.
+      function previewMe(el, src) {
+        document.getElementById(el).src=src;
+      }
